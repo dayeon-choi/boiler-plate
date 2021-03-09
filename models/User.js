@@ -48,6 +48,8 @@ userSchema.pre('save',function(next){
                 next()  //돌아감
             })
         })
+    }else{
+        next()
     }
 })
 

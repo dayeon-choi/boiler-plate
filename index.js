@@ -3,8 +3,8 @@ const app = express();
 const port = 5000;
 const bodyParser = require('body-parser');
 const cookieParser=require('cookie-parser');
+const { auth } = require("./middleware/auth");
 const { User } = require("./models/User");
-
 const config = require('./config/key');
 
 //application/x-www-from-urlencoded -> 이런 데이터를 분석해서 가져올 수 있게 해줌
@@ -70,6 +70,24 @@ app.post('/api/users/login',(req,res) => {
     })
   })
 })
+
+
+//role 1 어드민 role 2 특정부서 어드민
+//role 0 -> 일반유저 role 0이 아니면 관리자
+app.get('/api/users/auth',auth,(req,res)=>{
+  //여기까지 미들웨어를 통과해 왔다는 얘기는 Authentication 이 True라는 것
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image
+  })
+})
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
